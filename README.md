@@ -1,4 +1,4 @@
-# Hexagonal Grid Smoothing Case Study
+# CUDA Hexagonal Grid Smoothing Case Study
 
 [![CUDA](https://img.shields.io/badge/CUDA-11.0+-green.svg)](https://developer.nvidia.com/cuda-zone)
 [![C++](https://img.shields.io/badge/C++-17-blue.svg)](https://isocpp.org/)
