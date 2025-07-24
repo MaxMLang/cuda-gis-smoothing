@@ -1,4 +1,4 @@
-# Hexagonal Grid Smoothing Case Study
+# CUDA Hexagonal Grid Smoothing Case Study
 
 [![CUDA](https://img.shields.io/badge/CUDA-11.0+-green.svg)](https://developer.nvidia.com/cuda-zone)
 [![C++](https://img.shields.io/badge/C++-17-blue.svg)](https://isocpp.org/)
@@ -8,7 +8,8 @@
 
 This is my final project for the CUDA Programming Course at Oxford (Prof. Mike Giles).
 
-Course site: https://people.maths.ox.ac.uk/gilesm/cuda/
+Course website: https://people.maths.ox.ac.uk/gilesm/cuda/
+Practicals: https://github.com/MaxMLang/cuda-programming-notes 
 
 ## What this does
 
@@ -139,7 +140,7 @@ This was for the CUDA course at Oxford. Covered:
 
 ## Acknowledgments
 
-- Prof. Mike Giles & Wes Armour (teaching)
-- Oxford Math Institute
-- NVIDIA for CUDA
-- Oxford ARC for GPU access
+- Prof. Mike Giles and Prof. Wes Armour for teaching the course
+- Oxford Mathematical Institute for hosting
+- NVIDIA for CUDA tools
+- Oxford ARC for GPU server access
