@@ -9,6 +9,7 @@
 My capstone/case study final project for the CUDA Programming Course taught by Prof. Mike Giles at Oxford.
 
 Course website: https://people.maths.ox.ac.uk/gilesm/cuda/
+Practicals: https://github.com/MaxMLang/cuda-programming-notes 
 
 ## What this does
 
