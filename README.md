@@ -8,8 +8,8 @@
 
 This is my final project for the CUDA Programming Course at Oxford (Prof. Mike Giles).
 
-Course website: https://people.maths.ox.ac.uk/gilesm/cuda/
-Practicals: https://github.com/MaxMLang/cuda-programming-notes 
+* Course website: https://people.maths.ox.ac.uk/gilesm/cuda/
+* Practicals: https://github.com/MaxMLang/cuda-programming-notes 
 
 ## What this does
 
