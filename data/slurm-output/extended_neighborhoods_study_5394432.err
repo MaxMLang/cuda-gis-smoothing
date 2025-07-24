@@ -1,0 +1,6 @@
+src/cuda/hex_smooth_cuda_v5.cu(25): warning #177-D: variable "MAX_NEIGHBORS_TOTAL" was declared but never referenced
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+src/cuda/hex_smooth_cuda_v5.cu(30): warning #177-D: variable "WEIGHT_CENTER" was declared but never referenced
+

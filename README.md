@@ -14,14 +14,14 @@ Practicals: https://github.com/MaxMLang/cuda-programming-notes
 ## What this does
 
 - Smooths noisy NDVI satellite data from Uganda using hex grids
-- Compares CPU vs GPU (up to 154x faster!)
+- Compares CPU vs GPU (up to 70x faster!)
 - Shows how I went from basic to optimized CUDA
 - Tries different memory tricks
 
 ## Dataset
 
-- 74,811 hexagons from Uganda (3 districts)
-- Avg 2.75 neighbors per hex (max 6)
+- 500,104 hexagons from Kampala, Uganda (500k+ points)
+- Avg 5.99 neighbors per hex (max 6)
 - Goal: smooth NDVI using neighbors
 - Problem: neighbors are all over memory
 
@@ -41,20 +41,20 @@ docs/              # Notes
 ## Performance Results
 
 ### CPU
-- Naive: 705 μs (baseline)
-- OpenMP: 820 μs (actually slower!)
+- Naive: 3.55 ms (baseline)
+- OpenMP: 4.91 ms (actually slower!)
 
 ### CUDA
-- v1: 15.8 μs (44x faster)
-- v2: 14.3 μs (49x faster)
-- v3: 15.9 μs (no real change)
-- v3 (shuffle): 27.4 μs (worse)
-- v4: 18.2 μs (4 vars at once)
-- v4 (per var): 4.6 μs (154x faster!)
+- v1: 51.4 μs (69x faster)
+- v2: 50.8 μs (70x faster)
+- v3: 56.8 μs (no real change)
+- v3 (shuffle): 87.4 μs (worse)
+- v4: 83.6 μs (4 vars at once)
+- v4 (per var): 20.9 μs (170x faster!)
 
 ### v5 - 2nd Order
-- 1st-order: 17.3 μs (4.3 μs/var)
-- 2nd-order: 30.8 μs (7.7 μs/var)
+- 1st-order: 86.4 μs (21.6 μs/var)
+- 2nd-order: 160 μs (40 μs/var)
 
 ## Key Optimizations
 
@@ -68,7 +68,7 @@ docs/              # Notes
 - Changed neighbor array layout
 - Threads in warp access together
 - Padded to 6 neighbors
-- 10% better than v1
+- 1% better than v1
 
 ### v3 - Advanced
 - Texture memory: no help
@@ -77,7 +77,7 @@ docs/              # Notes
 ### v4 - Kernel Fusion
 - Process all 4 vars in one go
 - Reuse neighbor lookups
-- 3x faster than doing vars separately
+- 4x faster than doing vars separately
 
 ### v5 - 2nd Order
 - Looks at neighbors-of-neighbors
@@ -90,7 +90,7 @@ docs/              # Notes
 2. Kernel fusion is awesome for multi-var
 3. Shared memory only helps if reused a lot
 4. Always measure, don't just guess
-5. Only 2.75 neighbors per hex limits what you can do
+5. Only 5.99 neighbors per hex limits what you can do
 
 ## Building
 
@@ -141,6 +141,4 @@ This was for the CUDA course at Oxford. Covered:
 ## Acknowledgments
 
 - Prof. Mike Giles and Prof. Wes Armour for teaching the course
-- Oxford Mathematical Institute for hosting
-- NVIDIA for CUDA tools
 - Oxford ARC for GPU server access
