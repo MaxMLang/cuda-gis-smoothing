@@ -1,0 +1,163 @@
+=== Hexagonal Grid Smoothing Case Study ===
+Job ID: 5393663
+Running on: htc-g047
+GPU: Tesla V100-SXM2-32GB-LS
+Date: Thu 24 Jul 15:44:43 BST 2025
+
+--- Cleaning and building projects... ---
+rm -rf bin
+rm -f *.csv
+mkdir -p bin
+g++ -O3 -std=c++17 -Wall -o bin/hex_smooth_naive hex_smooth_naive.cpp
+g++ -O3 -std=c++17 -Wall -fopenmp -o bin/hex_smooth_optimized hex_smooth_optimized.cpp
+nvcc -O3 -arch=sm_70 -std=c++17 -o bin/hex_smooth_cuda_v1 hex_smooth_cuda_v1.cu
+nvcc -O3 -arch=sm_70 -std=c++17 -o bin/hex_smooth_cuda_v2 hex_smooth_cuda_v2.cu
+nvcc -O3 -arch=sm_70 -std=c++17 -o bin/hex_smooth_cuda_v3 hex_smooth_cuda_v3.cu
+nvcc -O3 -arch=sm_70 -std=c++17 -o bin/hex_smooth_cuda_v4 hex_smooth_cuda_v4.cu
+--- Build complete. ---
+
+=== CPU IMPLEMENTATIONS ===
+
+--- Running Naive CPU Implementation ---
+Loaded 74811 hexagons
+Neighbor stats: min=0, max=6, avg=2.74791
+
+=== Naive CPU Implementation ===
+Simple Average: 705.30 μs
+Gaussian: 741.70 μs
+
+--- Running Optimized CPU Implementation (4 threads) ---
+Loaded 74811 hexagons with 205574 total neighbor connections
+Neighbor stats: min=0, max=6, avg=2.74791
+
+=== Optimized CPU Implementation ===
+Using 4 OpenMP threads
+Chunk size: 1024
+Simple Average: 820.60 μs
+Gaussian: 803.70 μs
+
+=== CUDA IMPLEMENTATIONS ===
+
+--- Running CUDA v1: Naive GPU ---
+Using GPU: Tesla V100-SXM2-32GB-LS
+SM count: 80
+Max threads per block: 1024
+
+Loaded 74811 hexagons with 205574 total neighbor connections
+Neighbor stats: min=0, max=6, avg=2.74791
+
+=== CUDA v1: Naive Implementation ===
+Simple Average: 15.7696 μs
+Gaussian: 15.5648 μs
+
+--- Running CUDA v2: Coalesced Memory ---
+Using GPU: Tesla V100-SXM2-32GB-LS
+SM count: 80
+Max threads per block: 1024
+Shared memory per block: 49152 bytes
+
+Loaded 74811 hexagons with 205574 total neighbor connections
+Using padded layout with 6 slots per hexagon
+Neighbor stats: min=0, max=6, avg=2.74791
+
+=== CUDA v2: Coalesced Memory Access ===
+Simple Average: 14.2643 μs
+Gaussian: 14.3667 μs
+
+--- Running CUDA v3: Texture Memory ---
+Using GPU: Tesla V100-SXM2-32GB-LS
+SM count: 80
+Warp size: 32
+
+Loaded 74811 hexagons with 205574 total neighbor connections
+Neighbor stats: min=0, max=6, avg=2.74791
+
+=== CUDA v3: texture optimization ===
+Simple Average: 15.872 μs
+Gaussian: 15.4931 μs
+
+--- Running CUDA v3: Warp Shuffle ---
+Using GPU: Tesla V100-SXM2-32GB-LS
+SM count: 80
+Warp size: 32
+
+Loaded 74811 hexagons with 205574 total neighbor connections
+Neighbor stats: min=0, max=6, avg=2.74791
+
+=== CUDA v3: shuffle optimization ===
+Simple Average: 27.4227 μs
+Gaussian: 17.8995 μs
+
+--- Running CUDA v4: Kernel Fusion (Default) ---
+Using GPU: Tesla V100-SXM2-32GB-LS
+SM count: 80
+
+Created spatial reordering using Morton codes
+Loaded 74811 hexagons with 4 variables
+Processing 4 variables simultaneously
+Spatial reordering: enabled
+Shared memory: disabled
+
+=== CUDA v4: Kernel Fusion + Spatial Reordering ===
+Simple Average (4 variables): 22.4461 μs
+Per-variable time: 5.61152 μs
+
+--- Running CUDA v4: Kernel Fusion + Shared Memory ---
+Using GPU: Tesla V100-SXM2-32GB-LS
+SM count: 80
+
+Created spatial reordering using Morton codes
+Loaded 74811 hexagons with 4 variables
+Processing 4 variables simultaneously
+Spatial reordering: enabled
+Shared memory: enabled
+
+=== CUDA v4: Kernel Fusion + Spatial Reordering ===
+Simple Average (4 variables): 24.0538 μs
+Per-variable time: 6.01344 μs
+
+--- Running CUDA v4: Kernel Fusion (No Reordering) ---
+Using GPU: Tesla V100-SXM2-32GB-LS
+SM count: 80
+
+Loaded 74811 hexagons with 4 variables
+Processing 4 variables simultaneously
+Spatial reordering: disabled
+Shared memory: disabled
+
+=== CUDA v4: Kernel Fusion + Spatial Reordering ===
+Simple Average (4 variables): 18.2272 μs
+Per-variable time: 4.5568 μs
+
+=== PERFORMANCE SUMMARY ===
+
+Single Variable Processing:
+  CPU Naive:                ~730 μs
+  CPU Optimized (4 threads): ~870 μs
+  CUDA v1 (Naive):          ~16.9 μs
+  CUDA v2 (Coalesced):      ~15.2 μs
+  CUDA v3 (Texture):        ~15.87 μs
+  CUDA v3 (Shuffle):        ~27.42 μs
+
+Multi-Variable Processing (4 variables):
+  CUDA v4 (Fusion):         18.23
+  CUDA v4 (Fusion+Shared):  24.05
+  CUDA v4 (No Reorder):     22.45
+
+--- Validating Results ---
+Checking output files...
+naive: 74811 values computed
+optimized: 74811 values computed
+cuda_v1: 74811 values computed
+cuda_v2: 74811 values computed
+cuda_v3: 74811 values computed
+cuda_v4: 74811 values computed
+
+--- Comparing Results ---
+Comparing CUDA v1 vs v4:
+Maximum difference: 1.000000e-06
+✓ Results match within tolerance
+
+=== Case Study Complete ===
+Job finished at: Thu 24 Jul 15:45:02 BST 2025
+Final report saved to: final_performance_report.txt

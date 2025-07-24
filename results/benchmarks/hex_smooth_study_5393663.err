@@ -1,0 +1,4 @@
+hex_smooth_cuda_v2.cu(21): warning #177-D: variable "WARP_SIZE" was declared but never referenced
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
