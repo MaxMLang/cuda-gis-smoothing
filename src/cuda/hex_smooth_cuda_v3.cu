@@ -198,6 +198,7 @@ public:
         h_ndvi_values.resize(n_hexagons);
         h_neighbor_counts.resize(n_hexagons);
         h_smoothed_values.resize(n_hexagons);
+        // Padded neighbor array for coalesced access
         h_neighbor_indices_padded.resize(d_data.padded_neighbors_size, -1);
         
         for (int i = 0; i < n_hexagons; i++) {

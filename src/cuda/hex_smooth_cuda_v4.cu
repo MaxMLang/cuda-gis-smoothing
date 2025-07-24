@@ -45,12 +45,12 @@ __host__ __device__ inline uint32_t morton2D(uint16_t x, uint16_t y) {
 
 // Data structure for multiple variables
 struct HexagonGPUv4 {
-    float* values[NUM_VARIABLES];      // Multiple environmental variables
-    int* neighbor_indices;             // Reordered for spatial locality
+    float* values[NUM_VARIABLES];      // NDVI, MNDWI, EVI, NDWI
+    int* neighbor_indices;             // Neighbors, reordered
     float* smoothed_values[NUM_VARIABLES];
     int* neighbor_counts;
-    int* reorder_map;                  // Original to reordered index mapping
-    int* inverse_reorder_map;          // Reordered to original mapping
+    int* reorder_map;                  // Maps old to new
+    int* inverse_reorder_map;          // Maps new to old
     int n_hexagons;
     int padded_neighbors_size;
 };

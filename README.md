@@ -6,31 +6,31 @@
 
 ## Overview
 
-My capstone/case study final project for the CUDA Programming Course taught by Prof. Mike Giles at Oxford.
+This is my final project for the CUDA Programming Course at Oxford (Prof. Mike Giles).
 
-Course website: https://people.maths.ox.ac.uk/gilesm/cuda/
+Course site: https://people.maths.ox.ac.uk/gilesm/cuda/
 
 ## What this does
 
-- Smooths noisy NDVI satellite data from Uganda using hexagonal grids
-- Compares CPU vs GPU performance (got up to 154.6x speedup!)
-- Shows evolution from naive code to optimized CUDA kernels
-- Tests different memory access patterns and optimizations
+- Smooths noisy NDVI satellite data from Uganda using hex grids
+- Compares CPU vs GPU (up to 154x faster!)
+- Shows how I went from basic to optimized CUDA
+- Tries different memory tricks
 
 ## Dataset
 
 - 74,811 hexagons from Uganda (3 districts)
-- Average 2.75 neighbors per hexagon (max 6)
-- Goal: smooth NDVI measurements using neighbor relationships
-- Problem: neighbors scattered in memory = bad access patterns
+- Avg 2.75 neighbors per hex (max 6)
+- Goal: smooth NDVI using neighbors
+- Problem: neighbors are all over memory
 
 ## Repository Structure
 
 ```
 src/
-├── cuda/          # CUDA versions v1-v5
-├── cpu/           # CPU implementations
-scripts/           # Build scripts
+├── cuda/          # CUDA v1-v5
+├── cpu/           # CPU code
+scripts/           # Scripts
 data/              # Input files
 results/           # Outputs and benchmarks
 bin/               # Compiled executables
@@ -40,110 +40,106 @@ docs/              # Notes
 ## Performance Results
 
 ### CPU
-- Naive: 705.30 μs (baseline)
-- OpenMP "optimized": 820.60 μs (actually slower!)
+- Naive: 705 μs (baseline)
+- OpenMP: 820 μs (actually slower!)
 
-### CUDA Versions
-- v1 (naive): 15.77 μs (44.7x speedup)
-- v2 (coalesced): 14.26 μs (49.5x speedup)
-- v3 (texture): 15.87 μs (no improvement)
-- v3 (shuffle): 27.42 μs (much worse!)
-- v4 (fusion): 18.23 μs (38.7x for 4 variables)
-- v4 (per variable): 4.56 μs (154.6x speedup!)
+### CUDA
+- v1: 15.8 μs (44x faster)
+- v2: 14.3 μs (49x faster)
+- v3: 15.9 μs (no real change)
+- v3 (shuffle): 27.4 μs (worse)
+- v4: 18.2 μs (4 vars at once)
+- v4 (per var): 4.6 μs (154x faster!)
 
-### v5 - 2nd Order Neighborhood
-- 1st-order fusion: 17.27 μs (4.32 μs per variable)
-- 2nd-order fusion: 30.82 μs (7.71 μs per variable)
+### v5 - 2nd Order
+- 1st-order: 17.3 μs (4.3 μs/var)
+- 2nd-order: 30.8 μs (7.7 μs/var)
 
 ## Key Optimizations
 
-### v1 - Naive GPU Port
-- Direct translation from CPU
-- One thread per hexagon
-- Uncoalesced memory access
-- Still 44.7x faster than CPU
+### v1 - Naive GPU
+- Just ported CPU code
+- One thread per hex
+- Bad memory access
+- Still way faster than CPU
 
-### v2 - Coalesced Memory Access
-- Changed neighbor array layout to column-major
-- All threads in warp access neighbors together
-- Padded to MAX_NEIGHBORS=6
-- 10% improvement over v1
+### v2 - Coalesced
+- Changed neighbor array layout
+- Threads in warp access together
+- Padded to 6 neighbors
+- 10% better than v1
 
-### v3 - Advanced Memory
-- Texture memory: no improvement (wrong access pattern)
-- Warp shuffle: much worse (divergence issues)
+### v3 - Advanced
+- Texture memory: no help
+- Warp shuffle: much worse
 
 ### v4 - Kernel Fusion
-- Process NDVI, MNDWI, EVI, NDWI in single kernel
-- Reuse neighbor lookups across all variables
-- 3.1x improvement over separate processing
+- Process all 4 vars in one go
+- Reuse neighbor lookups
+- 3x faster than doing vars separately
 
-### v5 - 2nd Order Neighborhood
-- Extended to neighbors-of-neighbors
-- Gaussian weights: center (1.0), 1st-order (0.607), 2nd-order (0.135)
+### v5 - 2nd Order
+- Looks at neighbors-of-neighbors
+- Gaussian weights: center (1), 1st (0.6), 2nd (0.13)
 - More work but fusion still helps
 
 ## Lessons Learned
 
-1. Simple optimizations beat complex ones (coalescing > shuffle)
-2. Kernel fusion is huge win for multi-variable processing
-3. Shared memory needs sufficient reuse to be worth it
-4. Always measure - theoretical optimizations may backfire
-5. Problem characteristics matter - only 2.75 avg neighbors limits optimization
+1. Simple tricks > fancy ones
+2. Kernel fusion is awesome for multi-var
+3. Shared memory only helps if reused a lot
+4. Always measure, don't just guess
+5. Only 2.75 neighbors per hex limits what you can do
 
 ## Building
 
 ```bash
 # Build everything
 make all
-
-# Build only CPU
+# Just CPU
 make cpu
-
-# Build only CUDA
+# Just CUDA
 make cuda
-
-# Clean
+# Clean up
 make clean
 ```
 
 ## Running
 
 ```bash
-# Main case study
+# Main run
 ./scripts/case-study.sh
-
 # Test v5
 ./scripts/test-v5.sh
 ```
 
 ## Scaling Notes
 
-For millions of hexagons:
-- OpenMP would finally beat naive CPU
-- Shared memory becomes worthwhile
-- Spatial reordering would show benefits
-- Multi-GPU becomes essential
+For millions of hexes:
+- OpenMP finally wins
+- Shared memory starts to matter
+- Reordering helps
+- Need multi-GPU
 
-Memory requirements:
-- 75k hexagons: ~5MB
-- 1M hexagons: ~70MB
-- 10M hexagons: ~700MB
-- 100M hexagons: ~7GB
-- 1B hexagons: ~70GB
+Memory:
+- 75k: ~5MB
+- 1M: ~70MB
+- 10M: ~700MB
+- 100M: ~7GB
+- 1B: ~70GB
 
 ## Course Context
 
-This was for the CUDA Programming Course at Oxford covering:
-- Parallel computing fundamentals
-- Memory optimization (global, shared, constant, texture)
-- Performance tuning and profiling
-- Advanced features (warp shuffles, atomics, libraries)
-- Real-world applications
+This was for the CUDA course at Oxford. Covered:
+- Parallel basics
+- Memory tricks (global, shared, etc)
+- Tuning and profiling
+- Fancy stuff (warp shuffle, atomics)
+- Real-world uses
 
 ## Acknowledgments
 
-- Prof. Mike Giles and Prof. Wes Armour for teaching the course
-- Oxford Mathematical Institute for hosting
-- NVIDIA for CUDA tools
-- Oxford ARC for GPU server access
+- Prof. Mike Giles & Wes Armour (teaching)
+- Oxford Math Institute
+- NVIDIA for CUDA
+- Oxford ARC for GPU access

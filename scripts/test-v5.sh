@@ -1,4 +1,5 @@
 #!/bin/bash
+# test-v5.sh - runs all v5 smoothing configs
 # set the number of nodes and processes per node
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
@@ -17,7 +18,6 @@
 
 # use our reservation
 #SBATCH --reservation=cuda2025
-# test_cuda_v5.sh - Test extended neighborhood smoothing
 
 echo "=== Testing CUDA v5: Extended Neighborhoods ==="
 echo

@@ -20,24 +20,24 @@
     } while(0)
 
 // Constants
-constexpr int MAX_NEIGHBORS_1ST = 6;   // First-order neighbors
-constexpr int MAX_NEIGHBORS_2ND = 12;  // Second-order neighbors  
-constexpr int MAX_NEIGHBORS_TOTAL = 18; // Total possible neighbors
+constexpr int MAX_NEIGHBORS_1ST = 6;   // 1st-order neighbors
+constexpr int MAX_NEIGHBORS_2ND = 12;  // 2nd-order neighbors  
+constexpr int MAX_NEIGHBORS_TOTAL = 18; // Max possible neighbors
 constexpr int BLOCK_SIZE = 256;
 constexpr int NUM_VARIABLES = 4;
 
 // Gaussian weights based on hex distance
 constexpr float WEIGHT_CENTER = 1.0f;
-constexpr float WEIGHT_FIRST = 0.6065f;   // exp(-1.0/(2*1*1)) for distance 1
-constexpr float WEIGHT_SECOND = 0.1353f;  // exp(-3.0/(2*1*1)) for distance sqrt(3)
+constexpr float WEIGHT_FIRST = 0.6065f;   // For distance 1
+constexpr float WEIGHT_SECOND = 0.1353f;  // For distance sqrt(3)
 
 // Data structure
 struct HexagonGPUv5 {
     float* values[NUM_VARIABLES];
-    int* neighbor_indices_1st;     // First-order neighbors (coalesced layout)
-    int* neighbor_indices_2nd;     // Second-order neighbors (coalesced layout)
-    int* neighbor_counts_1st;      // Number of 1st order neighbors per hex
-    int* neighbor_counts_2nd;      // Number of 2nd order neighbors per hex
+    int* neighbor_indices_1st;     // 1st-order neighbors
+    int* neighbor_indices_2nd;     // 2nd-order neighbors
+    int* neighbor_counts_1st;      // How many 1st order neighbors
+    int* neighbor_counts_2nd;      // How many 2nd order neighbors
     float* smoothed_values[NUM_VARIABLES];
     int n_hexagons;
 };

@@ -1,4 +1,5 @@
 #!/bin/bash
+# case-study.sh - runs all the smoothing stuff
 # set the number of nodes and processes per node
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1

@@ -1,4 +1,4 @@
-# Makefile for hex smoothing case study
+# Makefile for hex smoothing project
 
 # Directories
 BIN_DIR = bin

@@ -19,15 +19,15 @@
 
 // Constants for optimization
 constexpr int WARP_SIZE = 32;
-constexpr int MAX_NEIGHBORS = 6;  // Hexagons have at most 6 neighbors
-constexpr int BLOCK_SIZE = 256;   // Multiple of warp size
+constexpr int MAX_NEIGHBORS = 6;  // Max 6 neighbors per hex
+constexpr int BLOCK_SIZE = 256;   // Block size
 
 // Improved data structure with padding for aligned access
 struct HexagonGPUv2 {
     float* ndvi_values;
-    int* neighbor_indices;      // Padded to MAX_NEIGHBORS per hexagon
+    int* neighbor_indices;      // Neighbors padded for coalesced access
     float* smoothed_values;
-    int* neighbor_counts;       // Actual neighbor count per hexagon
+    int* neighbor_counts;       // How many neighbors per hex
     int n_hexagons;
     int padded_neighbors_size;  // n_hexagons * MAX_NEIGHBORS
 };
@@ -51,8 +51,7 @@ __global__ void smoothSimpleAverageCoalesced(
     // Get actual neighbor count
     int n_neighbors = neighbor_counts[idx];
     
-    // Process neighbors with better memory pattern
-    // All threads in warp process their first neighbor together, then second, etc.
+    // Process neighbors (better memory pattern)
     #pragma unroll
     for (int i = 0; i < MAX_NEIGHBORS; i++) {
         if (i < n_neighbors) {

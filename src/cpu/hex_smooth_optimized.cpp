@@ -22,9 +22,9 @@ public:  // Move constants to public for access in main
 private:
     // Structure of Arrays for better cache performance
     std::vector<float> ndvi_values;
-    std::vector<int> neighbor_indices;  // Flattened neighbor list
-    std::vector<int> neighbor_offsets;  // Start index for each hexagon
-    std::vector<int> neighbor_counts;   // Number of neighbors per hexagon
+    std::vector<int> neighbor_indices;  // All neighbors in one list
+    std::vector<int> neighbor_offsets;  // Where each hex's neighbors start
+    std::vector<int> neighbor_counts;   // How many neighbors per hex
     std::vector<float> smoothed_values;
     int n_hexagons;
 

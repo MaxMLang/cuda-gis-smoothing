@@ -19,9 +19,9 @@
 // Device structure for hexagon data
 struct HexagonGPU {
     float* ndvi_values;
-    int* neighbor_indices;  // Flattened neighbor list
-    int* neighbor_offsets;  // Start index for each hexagon's neighbors
-    int* neighbor_counts;   // Number of neighbors per hexagon
+    int* neighbor_indices;  // All neighbors in one big list
+    int* neighbor_offsets;  // Where each hex's neighbors start
+    int* neighbor_counts;   // How many neighbors each hex has
     float* smoothed_values;
     int n_hexagons;
 };
@@ -46,7 +46,7 @@ __global__ void smoothSimpleAverageNaive(
     float sum = ndvi_values[idx];
     int total_count = 1;
     
-    // Loop through neighbors - causes divergence and uncoalesced access
+    // Loop through neighbors (slow, not coalesced)
     for (int i = 0; i < count; i++) {
         int neighbor_idx = neighbor_indices[start + i];
         if (neighbor_idx >= 0 && neighbor_idx < n_hexagons) {

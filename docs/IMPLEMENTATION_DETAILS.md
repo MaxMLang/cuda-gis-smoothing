@@ -5,71 +5,67 @@ Quick notes on each version and what I tried.
 ## CPU Versions
 
 ### Naive CPU (hex_smooth_naive.cpp)
-- Simple nested loops, no optimization
-- 705.30 μs baseline
-- Row-major traversal
+- Just loops, no tricks
+- 705 μs baseline
+- Row-major
 - Single-threaded
 
 ### Optimized CPU (hex_smooth_optimized.cpp)
-- OpenMP with 4 threads
-- 820.60 μs (slower than naive!)
-- Problems:
-  - OpenMP overhead too high for this size
-  - Thread creation/sync costs
-  - Chunk processing hurt cache locality
+- OpenMP, 4 threads
+- 820 μs (slower than naive!)
+- Why? Overhead too high, chunking hurts cache
 
 ## CUDA Versions
 
-### v1 - Naive GPU Port (hex_smooth_cuda_v1.cu)
-- Direct translation from CPU
-- One thread per hexagon
-- Uncoalesced memory access
-- 15.77 μs (44.7x speedup)
-- Shows GPU power even with bad memory patterns
+### v1 - Naive GPU (hex_smooth_cuda_v1.cu)
+- Just ported CPU code
+- One thread per hex
+- Bad memory access
+- 15.8 μs (44x faster)
+- GPU is fast even with bad memory
 
-### v2 - Coalesced Memory (hex_smooth_cuda_v2.cu)
-- Changed neighbor array layout to column-major
-- All threads in warp access neighbors[idx + i * n_hexagons] together
-- Padded to MAX_NEIGHBORS=6
-- 14.26 μs (49.5x speedup, 10% improvement)
-- Shared memory version: 16.06 μs (slower, limited reuse)
+### v2 - Coalesced (hex_smooth_cuda_v2.cu)
+- Changed neighbor array to column-major
+- Threads in warp access together
+- Padded to 6 neighbors
+- 14.3 μs (49x, 10% better)
+- Shared memory: 16.1 μs (not worth it)
 
-### v3 - Advanced Memory (hex_smooth_cuda_v3.cu)
-- Texture memory: 15.87 μs (no improvement)
-  - Texture cache didn't help scattered access
-- Warp shuffle: 27.42 μs (much worse!)
-  - Most neighbors not in same warp
-  - Divergence from checking warp boundaries
-  - Falls back to global memory most of time
-- Lesson: fancy features aren't always better
+### v3 - Advanced (hex_smooth_cuda_v3.cu)
+- Texture: 15.9 μs (no help)
+  - Texture cache didn't help
+- Warp shuffle: 27.4 μs (worse)
+  - Neighbors not in same warp
+  - Falls back to global most of the time
+- Lesson: fancy stuff isn't always better
 
 ### v4 - Kernel Fusion (hex_smooth_cuda_v4.cu)
-- Process NDVI, MNDWI, EVI, NDWI in single kernel
-- Reuse neighbor lookups across all variables
+- Process all 4 vars in one kernel
+- Reuse neighbor lookups
 - Results:
-  - With Morton codes: 22.45 μs
-  - With shared memory: 24.05 μs
-  - Without fancy stuff: 18.23 μs (best!)
-  - Per-variable time: 4.56 μs
-- 3.1x improvement over separate processing
+  - Morton codes: 22.5 μs
+  - Shared memory: 24.1 μs
+  - No tricks: 18.2 μs (best)
+  - Per-var: 4.6 μs
+- 3x better than separate
 
-### v5 - 2nd Order Neighborhood (hex_smooth_cuda_v5.cu)
-- Extended to neighbors-of-neighbors for wider smoothing
-- Gaussian weights: center (1.0), 1st-order (0.607), 2nd-order (0.135)
-- Calculate 2nd-order neighbors on CPU first (avg 3.2 new neighbors per hex)
+### v5 - 2nd Order (hex_smooth_cuda_v5.cu)
+- Looks at neighbors-of-neighbors
+- Gaussian weights: center (1), 1st (0.6), 2nd (0.13)
+- 2nd-order neighbors on CPU first (avg 3.2 per hex)
 - Results:
-  - 1st-order fusion: 17.27 μs (4.32 μs per variable)
-  - 2nd-order fusion: 30.82 μs (7.71 μs per variable)
-  - Uniform weights: 30.88 μs (no difference)
+  - 1st-order fusion: 17.3 μs (4.3 μs/var)
+  - 2nd-order fusion: 30.8 μs (7.7 μs/var)
+  - Uniform: 30.9 μs (no diff)
 
 ## Memory Layout Changes
 
 ### Coalesced Access
 ```
-Original (row-major):
+Original:
 neighbors[hex_id][neighbor_idx] = neighbor_hex_id
 
-Changed to (column-major):
+Now:
 neighbors[neighbor_idx * n_hexagons + hex_id] = neighbor_hex_id
 ```
 
@@ -82,20 +78,17 @@ __global__ void smooth_all_variables(
 ) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx >= n_hexagons) return;
-    
     // Load neighbors once
     int my_neighbors[MAX_NEIGHBORS];
     int my_n_neighbors = n_neighbors[idx];
     for (int i = 0; i < my_n_neighbors; i++) {
         my_neighbors[i] = neighbors[i * n_hexagons + idx];
     }
-    
-    // Process all variables
+    // Process all vars
     float ndvi_sum = ndvi[idx];
     float mndwi_sum = mndwi[idx];
     float evi_sum = evi[idx];
     float ndwi_sum = ndwi[idx];
-    
     for (int i = 0; i < my_n_neighbors; i++) {
         int neighbor = my_neighbors[i];
         ndvi_sum += ndvi[neighbor];
@@ -103,7 +96,6 @@ __global__ void smooth_all_variables(
         evi_sum += evi[neighbor];
         ndwi_sum += ndwi[neighbor];
     }
-    
     // Store results
     ndvi[idx] = ndvi_sum / (my_n_neighbors + 1);
     mndwi[idx] = mndwi_sum / (my_n_neighbors + 1);
@@ -115,30 +107,30 @@ __global__ void smooth_all_variables(
 ## Performance Issues Found
 
 ### Bottlenecks
-1. Memory bandwidth - irregular access patterns
-2. Warp divergence - neighbors scattered across warps
-3. Cache misses - poor spatial locality
-4. Thread utilization - some threads have fewer neighbors
+1. Memory bandwidth - weird access
+2. Warp divergence - neighbors all over
+3. Cache misses - bad locality
+4. Some threads have fewer neighbors
 
 ### What Worked vs What Didn't
-- Coalescing: high impact (10% improvement)
-- Kernel fusion: very high impact (3.1x improvement)
-- Texture memory: no impact (wrong pattern)
-- Warp shuffle: negative impact (divergence overhead)
-- Shared memory: limited impact (not enough reuse)
+- Coalescing: good (10% better)
+- Kernel fusion: really good (3x)
+- Texture: no help
+- Warp shuffle: bad (overhead)
+- Shared memory: not enough reuse
 
 ## Scaling Thoughts
 
-### For Bigger Datasets (millions of hexagons)
-- OpenMP would finally beat naive CPU
-- Shared memory becomes worthwhile
-- Spatial reordering would show benefits
-- Multi-GPU becomes essential
-- Out-of-core processing for billion+ hexagons
+### For Big Datasets
+- OpenMP finally wins
+- Shared memory helps
+- Reordering helps
+- Need multi-GPU
+- Out-of-core for billions
 
 ### Memory Scaling
-- 75k hexagons: ~5MB
-- 1M hexagons: ~70MB (fits in L2)
-- 10M hexagons: ~700MB (fits in GPU)
-- 100M hexagons: ~7GB (needs management)
-- 1B hexagons: ~70GB (needs multi-GPU) 
+- 75k: ~5MB
+- 1M: ~70MB (fits in L2)
+- 10M: ~700MB (fits in GPU)
+- 100M: ~7GB (need management)
+- 1B: ~70GB (need multi-GPU) 
