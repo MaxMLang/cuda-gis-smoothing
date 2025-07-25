@@ -9,7 +9,8 @@
 This is my final project for the CUDA Programming Course at Oxford (Prof. Mike Giles).
 
 * Course website: https://people.maths.ox.ac.uk/gilesm/cuda/
-* Practicals: https://github.com/MaxMLang/cuda-programming-notes 
+* Practicals: https://github.com/MaxMLang/cuda-programming-notes
+* Some thoughts on spatial reordering with Morton and Hilbert Curves: https://maxmlang.github.io/spatial-curves/
 
 ## What this does
 
