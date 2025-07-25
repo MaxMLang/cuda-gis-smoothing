@@ -6,108 +6,156 @@ make: 'bin/hex_smooth_cuda_v5' is up to date.
 --- Configuration 1: First-order only, single variable ---
 Using GPU: Tesla V100-SXM2-32GB-LS
 
-Loaded 74811 hexagons
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
 Configuration:
   Neighbor orders: 1st only
   Weights: Gaussian
   Processing: Single variable
+  Reordering: Recursive bisection (6 levels)
 
 === CUDA v5: Extended Neighborhood Smoothing ===
-Single variable time: 15.4726 μs
+Single variable time: 54.6202 μs
 
 --- Configuration 2: First-order only, multi-variable fusion ---
 Using GPU: Tesla V100-SXM2-32GB-LS
 
-Loaded 74811 hexagons
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
 Configuration:
   Neighbor orders: 1st only
   Weights: Gaussian
   Processing: Multi-variable fusion
+  Reordering: Recursive bisection (6 levels)
 
 === CUDA v5: Extended Neighborhood Smoothing ===
-Total time (4 variables): 17.5923 μs
-Per-variable time: 4.39808 μs
+Total time (4 variables): 88.7808 μs
+Per-variable time: 22.1952 μs
 
 === Comprehensive Benchmark ===
-Loaded 74811 hexagons
-1st-order, Gaussian, Single: 14.6739 μs
-Loaded 74811 hexagons
-1st-order, Gaussian, Fusion: 16.9062 μs (4.22656 μs/var)
-Generated second-order neighbors: avg 3.20076 per hexagon
-Loaded 74811 hexagons
-Both-orders, Gaussian, Single: 20.7258 μs
-Generated second-order neighbors: avg 3.20076 per hexagon
-Loaded 74811 hexagons
-Both-orders, Gaussian, Fusion: 31.5699 μs (7.89248 μs/var)
-Generated second-order neighbors: avg 3.20076 per hexagon
-Loaded 74811 hexagons
-Both-orders, Uniform, Fusion: 31.1706 μs (7.79264 μs/var)
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
+1st-order, Gaussian, Single, Reordered: 54.2925 μs
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
+1st-order, Gaussian, Fusion, Reordered: 90.6854 μs (22.6714 μs/var)
+Generated second-order neighbors: avg 11.9576 per hexagon
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
+Both-orders, Gaussian, Single, Reordered: 116.009 μs
+Generated second-order neighbors: avg 11.9576 per hexagon
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
+Both-orders, Gaussian, Fusion, Reordered: 170.691 μs (42.6726 μs/var)
+Generated second-order neighbors: avg 11.9576 per hexagon
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
+Both-orders, Uniform, Fusion, Reordered: 170.281 μs (42.5702 μs/var)
+Loaded 500104 hexagons
+1st-order, Gaussian, Fusion, No Reorder: 87.3779 μs (21.8445 μs/var)
+Generated second-order neighbors: avg 11.9576 per hexagon
+Loaded 500104 hexagons
+Both-orders, Gaussian, Fusion, No Reorder: 160.051 μs (40.0128 μs/var)
 
 --- Configuration 3: Both orders, single variable ---
 Using GPU: Tesla V100-SXM2-32GB-LS
 
-Generated second-order neighbors: avg 3.20076 per hexagon
-Loaded 74811 hexagons
+Generated second-order neighbors: avg 11.9576 per hexagon
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
 Configuration:
   Neighbor orders: 1st + 2nd
   Weights: Gaussian
   Processing: Single variable
+  Reordering: Recursive bisection (6 levels)
 
 === CUDA v5: Extended Neighborhood Smoothing ===
-Single variable time: 20.5312 μs
+Single variable time: 116.204 μs
 
 --- Configuration 4: Both orders, multi-variable fusion ---
 Using GPU: Tesla V100-SXM2-32GB-LS
 
-Generated second-order neighbors: avg 3.20076 per hexagon
-Loaded 74811 hexagons
+Generated second-order neighbors: avg 11.9576 per hexagon
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
 Configuration:
   Neighbor orders: 1st + 2nd
   Weights: Gaussian
   Processing: Multi-variable fusion
+  Reordering: Recursive bisection (6 levels)
 
 === CUDA v5: Extended Neighborhood Smoothing ===
-Total time (4 variables): 32.8397 μs
-Per-variable time: 8.20992 μs
+Total time (4 variables): 169.38 μs
+Per-variable time: 42.345 μs
 
 --- Configuration 5: Both orders, uniform weights, fusion ---
 Using GPU: Tesla V100-SXM2-32GB-LS
 
-Generated second-order neighbors: avg 3.20076 per hexagon
-Loaded 74811 hexagons
+Generated second-order neighbors: avg 11.9576 per hexagon
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
 Configuration:
   Neighbor orders: 1st + 2nd
   Weights: Uniform
   Processing: Multi-variable fusion
+  Reordering: Recursive bisection (6 levels)
 
 === CUDA v5: Extended Neighborhood Smoothing ===
-Total time (4 variables): 31.9693 μs
-Per-variable time: 7.99232 μs
+Total time (4 variables): 169.124 μs
+Per-variable time: 42.281 μs
 
 --- Running comprehensive benchmark ---
 Using GPU: Tesla V100-SXM2-32GB-LS
 
-Loaded 74811 hexagons
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
 Configuration:
   Neighbor orders: 1st only
   Weights: Gaussian
   Processing: Multi-variable fusion
+  Reordering: Recursive bisection (6 levels)
 
 === CUDA v5: Extended Neighborhood Smoothing ===
-Total time (4 variables): 17.8483 μs
-Per-variable time: 4.46208 μs
+Total time (4 variables): 89.8454 μs
+Per-variable time: 22.4614 μs
 
 === Comprehensive Benchmark ===
-Loaded 74811 hexagons
-1st-order, Gaussian, Single: 14.3872 μs
-Loaded 74811 hexagons
-1st-order, Gaussian, Fusion: 17.2749 μs (4.31872 μs/var)
-Generated second-order neighbors: avg 3.20076 per hexagon
-Loaded 74811 hexagons
-Both-orders, Gaussian, Single: 20.6848 μs
-Generated second-order neighbors: avg 3.20076 per hexagon
-Loaded 74811 hexagons
-Both-orders, Gaussian, Fusion: 30.8224 μs (7.7056 μs/var)
-Generated second-order neighbors: avg 3.20076 per hexagon
-Loaded 74811 hexagons
-Both-orders, Uniform, Fusion: 30.8838 μs (7.72096 μs/var)
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
+1st-order, Gaussian, Single, Reordered: 54.487 μs
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
+1st-order, Gaussian, Fusion, Reordered: 90.8288 μs (22.7072 μs/var)
+Generated second-order neighbors: avg 11.9576 per hexagon
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
+Both-orders, Gaussian, Single, Reordered: 116.173 μs
+Generated second-order neighbors: avg 11.9576 per hexagon
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
+Both-orders, Gaussian, Fusion, Reordered: 170.691 μs (42.6726 μs/var)
+Generated second-order neighbors: avg 11.9576 per hexagon
+Created recursive bisection reordering with 6 levels
+Average distance between consecutive elements: 66.3691
+Loaded 500104 hexagons with recursive bisection reordering
+Both-orders, Uniform, Fusion, Reordered: 171.827 μs (42.9568 μs/var)
+Loaded 500104 hexagons
+1st-order, Gaussian, Fusion, No Reorder: 87.1936 μs (21.7984 μs/var)
+Generated second-order neighbors: avg 11.9576 per hexagon
+Loaded 500104 hexagons
+Both-orders, Gaussian, Fusion, No Reorder: 160 μs (40 μs/var)

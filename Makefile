@@ -12,7 +12,7 @@ NVCC = nvcc
 # Flags
 CXXFLAGS = -O3 -std=c++17 -Wall
 OMPFLAGS = -fopenmp
-NVCCFLAGS = -O3 -arch=sm_70 -std=c++17
+NVCCFLAGS = -O3 -arch=sm_70 -std=c++17 --extended-lambda --expt-relaxed-constexpr
 
 # Targets
 all: cpu cuda

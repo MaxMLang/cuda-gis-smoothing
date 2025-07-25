@@ -52,9 +52,17 @@ docs/              # Notes
 - v4: 83.6 μs (4 vars at once)
 - v4 (per var): 20.9 μs (170x faster!)
 
-### v5 - 2nd Order
-- 1st-order: 86.4 μs (21.6 μs/var)
-- 2nd-order: 160 μs (40 μs/var)
+### v5 - Extended Neighborhoods with Recursive Bisection Reordering
+- **1st-order, Gaussian, Single, Reordered**: 54.49 μs
+- **1st-order, Gaussian, Fusion, Reordered**: 90.83 μs (22.71 μs/var)
+- **Both-orders, Gaussian, Single, Reordered**: 116.17 μs
+- **Both-orders, Gaussian, Fusion, Reordered**: 170.69 μs (42.67 μs/var)
+- **Both-orders, Uniform, Fusion, Reordered**: 171.83 μs (42.96 μs/var)
+
+**Memory Access Improvement:**
+- Average distance between consecutive elements: 66.37 (vs random ordering)
+- Recursive bisection with 6 levels creates optimal spatial locality
+- 4-7% overhead for significant memory access benefits
 
 ## Key Optimizations
 
